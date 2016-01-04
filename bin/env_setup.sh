@@ -1,3 +1,4 @@
+#!/usr/bin/zsh
 ################################################
 #
 # Environment setup for zsh
@@ -14,9 +15,6 @@
 
 bin_directory=$(cd -P -- "$(dirname -- "$0")" && printf '%s\n' "$(pwd -P)")
 project_directory="$(dirname $bin_directory)"
-echo $project_directory
 export APPNAME="$(basename $project_directory)"
-echo $APPNAME
-
-export PYTHONPATH="$project_directory/lib/python2.7/site-packages${PYTHONPATH:+:$PYTHONPATH}"
-echo $PYTHONPATH
+eval "export ${APPNAME:u}_PROJECT_DIRECTORY=${project_directory}"
+export PYTHONPATH="$project_directory/lib/python${PYTHONPATH:+:$PYTHONPATH}"
