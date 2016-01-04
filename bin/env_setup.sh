@@ -15,6 +15,11 @@
 
 bin_directory=$(cd -P -- "$(dirname -- "$0")" && printf '%s\n' "$(pwd -P)")
 project_directory="$(dirname $bin_directory)"
+echo $project_directory
+base_directory="$(dirname $project_directory)"
+echo $base_directory
+txl_directory="$base_directory/txl"
+echo txl_directory
 export APPNAME="$(basename $project_directory)"
 eval "export ${APPNAME:u}_PROJECT_DIRECTORY=${project_directory}"
-export PYTHONPATH="$project_directory/lib/python${PYTHONPATH:+:$PYTHONPATH}"
+export PYTHONPATH="$project_directory/lib/python:$txl_directory/lib/python${PYTHONPATH:+:$PYTHONPATH}"
