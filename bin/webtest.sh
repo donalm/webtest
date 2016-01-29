@@ -6,6 +6,14 @@ source "$bin_directory/env_setup.sh"
 txwebtest_username="txwebtest"
 txwebtest_groupname="txwebtest"
 
+getent passwd $txwebtest_username > /dev/null
+if [ $? -eq 0 ]; then
+    # Ok - user exists
+else
+    echo "ERROR: USER $txwebtest_username DOES NOT EXIST"
+    exit 1
+fi
+
 if [ "$USER" != "$txwebtest_username" ] && [ "$USER" != "root" ]
 then
     echo "ERROR: This process can only be managed by $txwebtest_username or root. Not ${USER}";
@@ -23,7 +31,6 @@ else
 fi
 
 cd $tmp_directory
-
 
 pidfile_directory="/var/run/${APPNAME}"
 if [ "$USER" = "root" ]; then
@@ -62,8 +69,8 @@ if [ "$SHUTDOWN" = "1" ]; then
         kill $pid
     fi;
 
-    while [[ "twistd" = "$(ps -p $pid -0 comm=)" ]]; do
-        echo "WAITING FOR $pid"
+    while [[ "pypy" = "$(ps -hp $pid -o comm=)" ]]; do
+        echo "WAITING FOR PID $pid"
         sleep 1
     done
 
@@ -71,6 +78,6 @@ fi;
 
 
 if [ "$STARTUP" = "1" ]; then
-    echo /usr/bin/pypy /usr/local/bin/twistd --uid=$txwebtest_uid --gid=$txwebtest_gid --pidfile=${pidfile} -y $project_directory/tac/web.tac
+    echo "STARTUP COMMAND:" /usr/bin/pypy /usr/local/bin/twistd --uid=$txwebtest_uid --gid=$txwebtest_gid --pidfile=${pidfile} -y $project_directory/tac/web.tac
     exec /usr/bin/pypy /usr/local/bin/twistd --uid=$txwebtest_uid --gid=$txwebtest_gid --pidfile=${pidfile} -y $project_directory/tac/web.tac
 fi;
