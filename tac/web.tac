@@ -16,6 +16,7 @@ logger = get_logger(appname)
 logger.error("WOAH")
 
 from webtest.web import index
+from webtest.site import RedisSite
 
 
 class ICounter(Interface):
@@ -53,7 +54,14 @@ class CounterResource(resource.Resource):
 class Simple(resource.Resource):
     isLeaf = True
     def render_GET(self, request):
-        return "<html>Hello, world 2!: %s</html>" % (request.path,)
+        df = request.getSession()
+        df.addCallback(self.cb, request)
+        return df
+
+    def cb(self, session, request):
+        someval = session.get("SOMEVAL", 'xxx')
+        session['SOMEVAL'] = "HELP"
+        return "<html>Hello, world 2!: '%s' %s</html>" % (someval, request.path,)
 
 root = index.Root()
 #root.putChild("hoops", Simple())
@@ -65,7 +73,7 @@ observer = log.PythonLoggingObserver(loggerName=appname)
 application = service.Application(appname)
 application.setComponent(log.ILogObserver, observer.emit)
 
-site = server.Site(root)
+site = RedisSite(root)
 sc = service.IServiceCollection(application)
 i = internet.TCPServer(8080, site)
 i.setServiceParent(sc)
