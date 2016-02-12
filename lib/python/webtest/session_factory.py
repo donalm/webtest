@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from txredisapi import UnixConnectionPool
-from webtest.session import PersistentSessionDict
+from webtest.session_dict import PersistentSessionDict
 from webtest import log
 
 logger = log.get_logger()
