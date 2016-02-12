@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from twisted.web.server import Site
-from webtest.session import RedisSessionFactory
+from webtest.session_factory import RedisSessionFactory
 from webtest.request import RedisRequest
 from webtest import log
 
