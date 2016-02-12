@@ -1,6 +1,6 @@
 {
     "log": {
-        "level": "DEBUG",
+        "level": "WARN",
         "paths": ["/var/log/{appname}/{appname}.log",
                  "/tmp/{appname}/{appname}.log"]
     },
