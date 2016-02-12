@@ -19,7 +19,7 @@ class AppLogger(object):
 
         config = Config()
         log_config         = config.get(appname, "log")
-        log_level          = log_config.get("level")
+        log_level          = log_config.get("level", "DEBUG")
         log_path_templates = log_config.get("paths")
         log_path           = get_log_path(appname, log_path_templates)
 
@@ -29,8 +29,15 @@ class AppLogger(object):
         trfh.setFormatter(formatter)
         cls.logger = logging.getLogger(appname)
         cls.logger.addHandler(trfh)
-        cls.logger.error("trfh")
-        cls.logger.setLevel(logging.DEBUG)
+        cls.logger.error("TimedRotatingFileHandler")
+
+        try:
+            real_log_level = getattr(logging, log_level)
+        except AttributeError, e:
+            real_log_level = logging.DEBUG
+            cls.logger.error("log level specified in config file '%s' does not exist: %s", log_level, e)
+
+        cls.logger.setLevel(real_log_level)
         return cls.logger
 
 def get_log_path(appname, log_path_templates):
