@@ -11,7 +11,7 @@ print("PYTHONPATH: %s" % (PYTHONPATH,))
 print("APPNAME: %s" % (APPNAME,))
 print("WEBTEST_PROJECT_DIRECTORY: %s" % (WEBTEST_PROJECT_DIRECTORY,))
 
-assert(PYTHONPATH == "/home/donal/Geek/webtest/lib/python:/home/donal/Geek/txl/lib/python")
+assert(PYTHONPATH == "/home/donal/Geek/webtest/lib/python")
 assert(APPNAME == "webtest")
 assert(WEBTEST_PROJECT_DIRECTORY == "/home/donal/Geek/webtest")
 
