@@ -10,7 +10,7 @@ def logging_errback(f, label="logging_errback"):
     logger.error("%s: %s" % (label, f.getBriefTraceback()))
 
 
-class RedisSessionFactory(dict):
+class RedisSessionFactory(object):
     """
     A user's session with a system.
 
@@ -39,7 +39,7 @@ class RedisSessionFactory(dict):
     @classmethod
     def _connection_failed(cls, f):
         """
-        Log an escalate connection failures
+        Log and escalate connection failures
         """
         logger.error("ERROR: connection to Redis failed: %s", f.getBriefTraceback())
         return f
@@ -140,10 +140,12 @@ class RedisSessionFactory(dict):
         return pool.hmset(uid, patch)
 
     @classmethod
-    def touch_session(cls, uid, timeout):
+    def touch_session(cls, uid, timeout=None):
         """
         Connect to Redis and update the session expiry
         """
+        if timeout is None:
+            timeout = cls.sessionTimeout
         return cls.connect_and_execute(cls._touch_session, uid, timeout)
 
     @classmethod
