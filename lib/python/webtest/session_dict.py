@@ -26,7 +26,7 @@ class PersistentSessionDict(dict):
     # Default lifetime for session data in seconds
     sessionTimeout = 900
 
-    def __init__(self, uid, dictionary, factory, _reactor=False, _sessionTimeout=None):
+    def __init__(self, uid, dictionary, factory, _reactor=False, session_timeout=None):
         dict.__init__(self, dictionary)
         self._modified = set()
         self._removed = set()
@@ -34,7 +34,7 @@ class PersistentSessionDict(dict):
         self._df = None
         self._factory = factory
         self._reactor = _reactor or txreactor
-        self._sessionTimeout = _sessionTimeout or PersistentSessionDict.sessionTimeout
+        self._session_timeout = session_timeout or PersistentSessionDict.sessionTimeout
 
     def __setitem__(self, key, value):
         """
@@ -213,7 +213,7 @@ class PersistentSessionDict(dict):
         """
         Update the expiry time on the data for our UID
         """
-        df = self._factory.touch_session(self.uid, self.sessionTimeout)
+        df = self._factory.touch_session(self.uid, self._session_timeout)
         df.addErrback(logging_errback, "self._factory.touch_session")
 
 
