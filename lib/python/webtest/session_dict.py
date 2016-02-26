@@ -44,10 +44,25 @@ class PersistentSessionDict(dict):
         @ivar key: The identifying key
         @ivar value: The value
         """
+        self._removed.discard(key)
         if not self.get(key) == value:
             self._modified.add(key)
             self._force_flush()
         return dict.__setitem__(self, key, value)
+
+    def __delitem__(self, key):
+        """
+        Override the __delitem__ method in dict to ensure that we capture any
+        keys that have been deleted before we call the method on the parent
+        class
+        @ivar key: The identifying key
+        @ivar value: The value
+        """
+        if key in self:
+            self._removed.add(key)
+            self._modified.discard(key)
+            self._force_flush()
+        return dict.__delitem__(self, key)
 
     def _force_flush(self):
         """
@@ -77,6 +92,7 @@ class PersistentSessionDict(dict):
         @ivar key: The identifying key
         @ivar deault: The default value
         """
+        self._removed.discard(key)
         if not key in self:
             self._modified.add(key)
             self._force_flush()
@@ -90,7 +106,7 @@ class PersistentSessionDict(dict):
         @ivar deault: The default value
         """
         try:
-            self._modified.remove(args[0])
+            self._modified.discard(args[0])
             self._removed.add(args[0])
             self._force_flush()
         except Exception, e:
@@ -104,7 +120,7 @@ class PersistentSessionDict(dict):
         """
         rval = dict.popitem(self)
         try:
-            self._modified.remove(rval[0])
+            self._modified.discard(rval[0])
             self._removed.add(rval[0])
             self._force_flush()
         except Exception, e:
@@ -126,7 +142,8 @@ class PersistentSessionDict(dict):
         """
         [self._removed.add(key) for key in self.keys()]
         self._modified = set()
-        dict.clear(self)
+        self._force_flush()
+        return dict.clear(self)
 
     def expire(self):
         """
@@ -134,7 +151,9 @@ class PersistentSessionDict(dict):
         delete the data from the persistence mechanism.
         """
         # This is the one case in which we want to delete data from this class without
-        # storing keys in self._modified or self._removed
+        # storing keys in self._modified or self._removed, and without flushing the
+        # data to the storage layer, since we're about to 'expire' our data from the
+        # storage layer completely
         dict.clear(self)
         self._factory.expire(self.uid)
 
@@ -145,16 +164,15 @@ class PersistentSessionDict(dict):
         """
         try:
             new_dict = args[0]
-            for key in new_dict.items():
+            for key in new_dict.keys():
                 self._modified.add(key)
-                try:
-                    self._removed.remove(key)
-                except Exception:
-                    pass
+                self._removed.discard(key)
         except Exception:
             pass
         for key in kwargs.keys():
             self._modified.add(key)
+            self._removed.discard(key)
+        self._force_flush()
         return dict.update(self, *args, **kwargs)
 
     def _flush(self):
