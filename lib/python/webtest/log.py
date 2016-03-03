@@ -6,14 +6,14 @@ from logging.handlers import TimedRotatingFileHandler
 
 import logging
 
-def get_logger(appname=None):
-    return AppLogger.get(appname)
+def get_logger(appname=None, instance=0):
+    return AppLogger.get(appname, instance)
 
 class AppLogger(object):
     logger = None
 
     @classmethod
-    def get(cls, appname):
+    def get(cls, appname, instance):
         if appname is None:
             return cls.logger
 
@@ -21,7 +21,7 @@ class AppLogger(object):
         log_config         = config.get(appname, "log")
         log_level          = log_config.get("level", "DEBUG")
         log_path_templates = log_config.get("paths")
-        log_path           = get_log_path(appname, log_path_templates)
+        log_path           = get_log_path(appname, instance, log_path_templates)
 
         formatter = logging.Formatter('%(asctime)s: %(levelname)s : %(message)s    [%(process)d:%(pathname)s:%(lineno)d]')
 
@@ -40,10 +40,14 @@ class AppLogger(object):
         cls.logger.setLevel(real_log_level)
         return cls.logger
 
-def get_log_path(appname, log_path_templates):
+def get_log_path(appname, instance, log_path_templates):
     for log_path_template in log_path_templates:
         try:
-            log_path = log_path_template.format(appname=appname)
+            instance = int(instance)
+        except Exception, e:
+            instance = 0
+        try:
+            log_path = log_path_template.format(appname=appname, instance="%03d" % (instance,))
             try:
                 os.makedirs(os.path.dirname(log_path), 0755)
             except OSError, e:

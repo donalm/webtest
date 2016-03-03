@@ -6,6 +6,10 @@ source "$bin_directory/env_setup.sh"
 txwebtest_username="txwebtest"
 txwebtest_groupname="txwebtest"
 
+if [ -z $WEBTEST_INSTANCE ]; then
+    export WEBTEST_INSTANCE="001"
+fi
+
 getent passwd $txwebtest_username > /dev/null
 if [ $? -eq 0 ]; then
     # Ok - user exists
@@ -45,7 +49,7 @@ if [ "$USER" = "root" ]; then
     chmod 750 $pidfile_directory
 fi
 
-pidfile="${pidfile_directory}/${APPNAME}.pid"
+pidfile="${pidfile_directory}/${APPNAME}.$WEBTEST_INSTANCE.pid"
 
 txwebtest_uid="$(/usr/bin/id -u $txwebtest_username)"
 txwebtest_gid="$(/usr/bin/getent group $txwebtest_groupname | /usr/bin/cut -d: -f3)"
