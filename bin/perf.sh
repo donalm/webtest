@@ -82,6 +82,6 @@ fi;
 
 
 if [ "$STARTUP" = "1" ]; then
-    echo "STARTUP COMMAND:" /usr/bin/pypy /usr/local/bin/twistd --uid=$txperftest_uid --gid=$txperftest_gid --pidfile=${pidfile} -y $project_directory/tac/web.tac
+    echo "STARTUP COMMAND:" /usr/bin/pypy /usr/local/bin/twistd --uid=$txperftest_uid --gid=$txperftest_gid --pidfile=${pidfile} -y $project_directory/tac/$APPNAME.tac
     exec /usr/bin/pypy /usr/local/bin/twistd --uid=$txperftest_uid --gid=$txperftest_gid --pidfile=${pidfile} -y $project_directory/tac/web.tac
 fi;
