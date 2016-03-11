@@ -3,24 +3,24 @@
 bin_directory=$(cd -P -- "$(dirname -- "$0")" && printf '%s\n' "$(pwd -P)")
 source "$bin_directory/env_setup.sh"
 
-txperftest_username="txperftest"
-txperftest_groupname="txperftest"
+txapp_username="tx$APPNAME"
+txapp_groupname="tx$APPNAME"
 
 if [ -z $WEBTEST_INSTANCE ]; then
     export WEBTEST_INSTANCE="001"
 fi
 
-getent passwd $txperftest_username > /dev/null
+getent passwd $txapp_username > /dev/null
 if [ $? -eq 0 ]; then
     # Ok - user exists
 else
-    echo "ERROR: USER $txperftest_username DOES NOT EXIST"
+    echo "ERROR: USER $txapp_username DOES NOT EXIST"
     exit 1
 fi
 
-if [ "$USER" != "$txperftest_username" ] && [ "$USER" != "root" ]
+if [ "$USER" != "$txapp_username" ] && [ "$USER" != "root" ]
 then
-    echo "ERROR: This process can only be managed by $txperftest_username or root. Not ${USER}";
+    echo "ERROR: This process can only be managed by $txapp_username or root. Not ${USER}";
     exit 1;
 fi
 
@@ -30,7 +30,7 @@ then
     # OK - Let's hope we have write-access
 else
     mkdir -p $tmp_directory
-    chown $txperftest_username:$txperftest_groupname $tmp_directory
+    chown $txapp_username:$txapp_groupname $tmp_directory
     chmod 750 $tmp_directory
 fi
 
@@ -41,18 +41,18 @@ if [ "$USER" = "root" ]; then
 
     log_directory="/var/log/${APPNAME}"
     mkdir -p $log_directory
-    chown $txperftest_username:$txperftest_username $log_directory
+    chown $txapp_username:$txapp_username $log_directory
     chmod 750 $log_directory
 
     mkdir -p $pidfile_directory
-    chown $txperftest_username:$txperftest_username $pidfile_directory
+    chown $txapp_username:$txapp_groupname $pidfile_directory
     chmod 750 $pidfile_directory
 fi
 
 pidfile="${pidfile_directory}/${APPNAME}.$WEBTEST_INSTANCE.pid"
 
-txperftest_uid="$(/usr/bin/id -u $txperftest_username)"
-txperftest_gid="$(/usr/bin/getent group $txperftest_groupname | /usr/bin/cut -d: -f3)"
+txapp_uid="$(/usr/bin/id -u $txapp_username)"
+txapp_gid="$(/usr/bin/getent group $txapp_groupname | /usr/bin/cut -d: -f3)"
 
 SHUTDOWN=0
 STARTUP=0
@@ -82,6 +82,6 @@ fi;
 
 
 if [ "$STARTUP" = "1" ]; then
-    echo "STARTUP COMMAND:" /usr/bin/pypy /usr/local/bin/twistd --uid=$txperftest_uid --gid=$txperftest_gid --pidfile=${pidfile} -y $project_directory/tac/$APPNAME.tac
-    exec /usr/bin/pypy /usr/local/bin/twistd --uid=$txperftest_uid --gid=$txperftest_gid --pidfile=${pidfile} -y $project_directory/tac/web.tac
+    echo "STARTUP COMMAND:" /usr/bin/pypy /usr/local/bin/twistd --uid=$txapp_uid --gid=$txapp_gid --pidfile=${pidfile} -y $project_directory/tac/$APPNAME.tac
+    exec /usr/bin/pypy /usr/local/bin/twistd --uid=$txapp_uid --gid=$txapp_gid --pidfile=${pidfile} -y $project_directory/tac/web.tac
 fi;
