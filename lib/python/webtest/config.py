@@ -27,14 +27,9 @@ class Config(object):
         """
         Go back to the filesystem and re-read the config file
         """
-        try:
-            filepath = getModule(__name__).filePath
-            basedir = filepath.parent().parent().parent().parent().path
-        except Exception, e:
-            print("Failed to get project basedir: %s" % (e,))
-            raise
-
-        json_config_file = os.path.join(basedir, "etc/config_data.json")
+        project_directory = os.environ.get("%s_PROJECT_DIRECTORY" % (appname.upper(),))
+        json_config_file = os.path.join(project_directory, "etc/%s_config_data.json" % (appname,))
+        print json_config_file
         fh = open(json_config_file, 'r')
         try:
             cls.data[appname] = json.load(fh)
@@ -50,5 +45,4 @@ class Config(object):
 
 
 if __name__ == '__main__':
-    c = Config()
-    print c.get('webtest', 'log')
+    print Config.get('perftest', 'database')
