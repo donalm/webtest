@@ -4,5 +4,12 @@
         "paths": ["/var/log/{appname}/{appname}.{instance}.log",
                  "/tmp/{appname}/{appname}.{instance}.log"]
     },
+    "database": {
+        "user": "perftest",
+        "password": "changeme",
+        "host": "127.0.0.1",
+        "database": "perftest",
+        "port": 5432
+    },
     "appname": "webtest"
 }
