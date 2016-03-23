@@ -40,7 +40,6 @@ logger = get_logger(appname)
 logger.error("WOAH")
 
 from webtest.web import index
-from webtest.site import RedisSite
 from webtest.db_pool import Pool
 
 def initialize(appname):
@@ -198,7 +197,7 @@ observer = log.PythonLoggingObserver(loggerName=appname)
 application = service.Application(appname)
 application.setComponent(log.ILogObserver, observer.emit)
 
-site = RedisSite(root)
+site = server.Site(root)
 sc = service.IServiceCollection(application)
 i = internet.TCPServer(8081, site)
 i.setServiceParent(sc)
