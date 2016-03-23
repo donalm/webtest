@@ -1,5 +1,7 @@
 #!/usr/bin/zsh
 
+export APPNAME=`basename $0`
+echo "APPNAME $APPNAME"
 bin_directory=$(cd -P -- "$(dirname -- "$0")" && printf '%s\n' "$(pwd -P)")
 source "$bin_directory/env_setup.sh"
 
@@ -41,7 +43,7 @@ if [ "$USER" = "root" ]; then
 
     log_directory="/var/log/${APPNAME}"
     mkdir -p $log_directory
-    chown $txapp_username:$txapp_username $log_directory
+    chown $txapp_username:$txapp_groupname $log_directory
     chmod 750 $log_directory
 
     mkdir -p $pidfile_directory
