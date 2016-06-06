@@ -22,6 +22,7 @@ class AppLogger(object):
         log_level          = log_config.get("level", "DEBUG")
         log_path_templates = log_config.get("paths")
         log_path           = get_log_path(appname, instance, log_path_templates)
+        print("Logging to '%s'" % (log_path,))
 
         formatter = logging.Formatter('%(asctime)s: %(levelname)s : %(message)s    [%(process)d:%(pathname)s:%(lineno)d]')
 
@@ -56,7 +57,7 @@ def get_log_path(appname, instance, log_path_templates):
                     raise
 
             fh = open(log_path, 'a')
-            fh.write("-- starting up --")
+            fh.write("-- starting up --\n")
             fh.close()
             return log_path
         except Exception, e:
