@@ -7,8 +7,6 @@ config before it can configure itself to start logging
 
 import os
 import json
-from twisted.python.modules import getModule
-
 
 
 class Config(object):

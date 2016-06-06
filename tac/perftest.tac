@@ -4,9 +4,6 @@ import cgi
 import json
 import random
 from operator import itemgetter
-from zope.interface import Interface, Attribute, implements
-from twisted.python.components import registerAdapter
-from twisted.web.server import Session
 from twisted.application import internet, service
 from twisted.python import log
 from twisted.web import server
