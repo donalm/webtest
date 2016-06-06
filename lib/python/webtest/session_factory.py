@@ -50,7 +50,7 @@ class RedisSessionFactory(object):
         Establish a connection to the Redis service (if none exists)
         """
         if cls._pool is None:
-            df = UnixConnectionPool()
+            df = UnixConnectionPool("/var/run/redis/redis.sock", poolsize=2, reconnect=False)
             df.addCallback(cls._connected)
             df.addErrback(cls._connection_failed)
             return df
