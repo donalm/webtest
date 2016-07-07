@@ -23,7 +23,7 @@ class PersistentSessionDict(dict):
     """
 
     # Default lifetime for session data in seconds
-    sessionTimeout = 900
+    defaultSessionTimeout = 900
 
     def __init__(self, uid, dictionary, factory, _reactor=False, session_timeout=None):
         dict.__init__(self, dictionary)
@@ -33,7 +33,7 @@ class PersistentSessionDict(dict):
         self._df = None
         self._factory = factory
         self._reactor = _reactor or txreactor
-        self._session_timeout = session_timeout or PersistentSessionDict.sessionTimeout
+        self._session_timeout = session_timeout or PersistentSessionDict.defaultSessionTimeout
 
     def __setitem__(self, key, value):
         """
