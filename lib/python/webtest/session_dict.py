@@ -12,8 +12,7 @@ def logging_errback(f, label="logging_errback"):
 
 class PersistentSessionDict(dict):
     """
-    A user's session with a system. Note that we're subclassing dict. And may
-    the lord have mercy on our souls.
+    A user's web session data. NOTE: We're subclassing dict. Never do that.
 
     @ivar uid: A unique identifier for the session, C{bytes}.
     @ivar dictionary: The default session data. Must be a dict. Probably empty.
