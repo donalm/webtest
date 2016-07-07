@@ -20,9 +20,9 @@ class RedisSessionFactory(object):
     @ivar uid: A unique identifier for the session, C{bytes}.
     @ivar _reactor: An object providing L{IReactorTime} to use for scheduling
         expiration.
-    @ivar sessionTimeout: timeout of a session, in seconds.
+    @ivar defaultSessionTimeout: timeout of a session, in seconds.
     """
-    sessionTimeout = 900
+    defaultSessionTimeout = 900
 
     _expireCall = None
     _pool = None
@@ -145,7 +145,7 @@ class RedisSessionFactory(object):
         Connect to Redis and update the session expiry
         """
         if timeout is None:
-            timeout = cls.sessionTimeout
+            timeout = cls.defaultSessionTimeout
         return cls.connect_and_execute(cls._touch_session, uid, timeout)
 
     @classmethod
